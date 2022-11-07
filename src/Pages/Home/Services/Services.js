@@ -9,7 +9,7 @@ const Services = () => {
         title: "Our Service Area",
     }
     useEffect(() => {
-        fetch("http://localhost:5000/services")
+        fetch("https://genius-car-server-opal-iota.vercel.app/services")
             .then(response => response.json())
             .then(data => setServices(data));
     }, [])

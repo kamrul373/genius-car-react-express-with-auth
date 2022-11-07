@@ -6,7 +6,7 @@ const Order = () => {
     const { user, logout } = useContext(AuthContext);
     const [orders, setOrders] = useState([]);
     useEffect(() => {
-        fetch(`http://localhost:5000/order?email=${user?.email}`, {
+        fetch(`https://genius-car-server-opal-iota.vercel.app/order?email=${user?.email}`, {
             headers: {
                 authorizationToken: `Bearer ${localStorage.getItem("token")}`
             }
@@ -24,7 +24,7 @@ const Order = () => {
         console.log(id);
         const confirm = window.confirm("Are you sure you want to cancel order ?")
         if (confirm) {
-            fetch(`http://localhost:5000/order/${id}`, {
+            fetch(`https://genius-car-server-opal-iota.vercel.app/order/${id}`, {
                 method: "DELETE",
                 headers: {
                     authorizationToken: `Bearer ${localStorage.getItem("token")}`
@@ -43,7 +43,7 @@ const Order = () => {
 
     }
     const handleOrderStatus = (id) => {
-        fetch(`http://localhost:5000/order/${id}`, {
+        fetch(`https://genius-car-server-opal-iota.vercel.app/order/${id}`, {
             method: "PATCH",
             headers: {
                 "content-type": "application/json",
