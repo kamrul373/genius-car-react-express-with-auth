@@ -31,10 +31,11 @@ const Checkout = () => {
                 fname, lname, email, phone, addr
             }
         }
-        fetch("https://genius-car-server-opal-iota.vercel.app/order/", {
+        fetch("http://localhost:5000/order/", {
             method: "POST",
             headers: {
-                "content-type": "application/json"
+                "content-type": "application/json",
+                authorizationToken: `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify(orderInfo)
         })

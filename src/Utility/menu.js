@@ -3,7 +3,10 @@ import { Link, Navigate } from "react-router-dom";
 const menu = (user, logout, navigate) => {
 
     const handleLogout = () => {
-        logout().then(response => navigate("/login"))
+        logout().then(response => {
+            localStorage.removeItem("token")
+            return navigate("/login")
+        })
             .catch(error => console.log(error));
     }
     if (user) {

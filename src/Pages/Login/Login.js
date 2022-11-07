@@ -3,10 +3,34 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import img from "../../assets/images/login/login.svg";
 import { AuthContext } from '../../context/AuthContextProvider';
 const Login = () => {
-    const { login } = useContext(AuthContext);
+    const { login, googleLogin } = useContext(AuthContext);
     const navigate = useNavigate()
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+
+    const handleGoogle = () => {
+        googleLogin()
+            .then(data => {
+                const user = data.user;
+                const currentUser = {
+                    email: user.email
+                }
+                fetch("http://localhost:5000/jwt", {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify(currentUser)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        localStorage.setItem("token", data.accessToken)
+
+                    })
+                navigate(from, { replace: true });
+            })
+    }
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -16,7 +40,23 @@ const Login = () => {
 
         login(email, password)
             .then(response => {
-                console.log(response.user)
+                const user = response.user
+                const currentUser = {
+                    email: user.email
+                }
+                fetch("http://localhost:5000/jwt", {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify(currentUser)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        localStorage.setItem("token", data.accessToken)
+                    })
+
                 navigate(from, { replace: true });
             })
             .catch(err => console.log(err));
@@ -48,6 +88,10 @@ const Login = () => {
                         </div>
                         <div className="form-control mt-6">
                             <button type='submit' className="btn">Login</button>
+                        </div>
+                        <div className='text-center'>
+                            <h4 className='text-lg font-bold  my-3'>Social Login</h4>
+                            <button onClick={handleGoogle} className='btn'>G</button>
                         </div>
                         <p className='text-center'>Dont have an account? <Link to="/signup" className='text-regal-orange font-bold'>Sign Up</Link></p>
                     </div>

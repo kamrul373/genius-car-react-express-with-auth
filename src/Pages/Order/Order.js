@@ -3,20 +3,32 @@ import { AuthContext } from '../../context/AuthContextProvider';
 import OrderItem from './OrderItem';
 
 const Order = () => {
-    const { user } = useContext(AuthContext);
+    const { user, logout } = useContext(AuthContext);
     const [orders, setOrders] = useState([]);
     useEffect(() => {
-        fetch(`https://genius-car-server-opal-iota.vercel.app/order?email=${user?.email}`)
-            .then(response => response.json())
+        fetch(`http://localhost:5000/order?email=${user?.email}`, {
+            headers: {
+                authorizationToken: `Bearer ${localStorage.getItem("token")}`
+            }
+        })
+            .then(response => {
+                if (response.status === 401 || response.status === 402 || response.status === 403) {
+                    return logout;
+                }
+                return response.json()
+            })
             .then(ord => setOrders(ord))
-    }, [user?.email]);
+    }, [user?.email, logout]);
 
     const handleDeleteOrder = (id) => {
         console.log(id);
         const confirm = window.confirm("Are you sure you want to cancel order ?")
         if (confirm) {
-            fetch(`https://genius-car-server-opal-iota.vercel.app/order/${id}`, {
-                method: "DELETE"
+            fetch(`http://localhost:5000/order/${id}`, {
+                method: "DELETE",
+                headers: {
+                    authorizationToken: `Bearer ${localStorage.getItem("token")}`
+                }
             }).then(response => response.json())
                 .then(data => {
                     console.log(data)
@@ -31,10 +43,12 @@ const Order = () => {
 
     }
     const handleOrderStatus = (id) => {
-        fetch(`https://genius-car-server-opal-iota.vercel.app/order/${id}`, {
+        fetch(`http://localhost:5000/order/${id}`, {
             method: "PATCH",
             headers: {
-                "content-type": "application/json"
+                "content-type": "application/json",
+                authorizationToken: `Bearer ${localStorage.getItem("token")}`
+
             },
             body: JSON.stringify({ status: "Approved" })
 
